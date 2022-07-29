@@ -1,5 +1,5 @@
 const Card = require('../models/card');
-const { VALIDATION_ERR, CAST_ERR, DEFAULT_ERR } = require('../error/errorCodes');
+const { VALIDATION_ERR, NOT_FOUND_ERR, DEFAULT_ERR } = require('../error/errorCodes');
 
 module.exports.getCards = (req, res) => {
   Card.find({})
@@ -29,10 +29,16 @@ module.exports.createCard = (req, res) => {
 
 module.exports.deleteCard = (req, res) => {
   Card.findByIdAndRemove(req.params.cardId)
-    .then((card) => res.send(card))
+    .then((card) => {
+      if (!card) {
+        res.status(NOT_FOUND_ERR.status).send({ message: NOT_FOUND_ERR.message });
+      } else {
+        res.send(card);
+      }
+    })
     .catch((err) => {
       if (err.name === 'CastError') {
-        res.status(CAST_ERR.status).send({ message: CAST_ERR.message });
+        res.status(VALIDATION_ERR.status).send({ message: VALIDATION_ERR.message });
         return;
       }
       res.status(DEFAULT_ERR.status).send({ message: DEFAULT_ERR.message });
@@ -47,10 +53,16 @@ module.exports.likeCard = (req, res) => {
     { $addToSet: { likes: id } },
     { new: true },
   )
-    .then((card) => res.send(card))
+    .then((card) => {
+      if (!card) {
+        res.status(NOT_FOUND_ERR.status).send({ message: NOT_FOUND_ERR.message });
+      } else {
+        res.send(card);
+      }
+    })
     .catch((err) => {
       if (err.name === 'CastError') {
-        res.status(CAST_ERR.status).send({ message: CAST_ERR.message });
+        res.status(VALIDATION_ERR.status).send({ message: VALIDATION_ERR.message });
         return;
       }
       res.status(DEFAULT_ERR.status).send({ message: DEFAULT_ERR.message });
@@ -65,10 +77,16 @@ module.exports.deleteCardLike = (req, res) => {
     { $pull: { likes: id } },
     { new: true },
   )
-    .then((card) => res.send(card))
+    .then((card) => {
+      if (!card) {
+        res.status(NOT_FOUND_ERR.status).send({ message: NOT_FOUND_ERR.message });
+      } else {
+        res.send(card);
+      }
+    })
     .catch((err) => {
       if (err.name === 'CastError') {
-        res.status(CAST_ERR.status).send({ message: CAST_ERR.message });
+        res.status(VALIDATION_ERR.status).send({ message: VALIDATION_ERR.message });
         return;
       }
       res.status(DEFAULT_ERR.status).send({ message: DEFAULT_ERR.message });

@@ -3,7 +3,7 @@ const VALIDATION_ERR = {
   message: 'Переданы некорректные данные',
 };
 
-const CAST_ERR = {
+const NOT_FOUND_ERR = {
   status: 404,
   message: 'Данные не найден или был запрошен несуществующий роут',
 };
@@ -15,6 +15,6 @@ const DEFAULT_ERR = {
 
 module.exports = {
   VALIDATION_ERR,
-  CAST_ERR,
+  NOT_FOUND_ERR,
   DEFAULT_ERR,
 };

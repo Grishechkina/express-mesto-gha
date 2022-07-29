@@ -1,5 +1,5 @@
 const User = require('../models/user');
-const { VALIDATION_ERR, CAST_ERR, DEFAULT_ERR } = require('../error/errorCodes');
+const { VALIDATION_ERR, NOT_FOUND_ERR, DEFAULT_ERR } = require('../error/errorCodes');
 
 module.exports.getUsers = (req, res) => {
   User.find({})
@@ -9,10 +9,16 @@ module.exports.getUsers = (req, res) => {
 
 module.exports.getUserById = (req, res) => {
   User.findById(req.params.userId)
-    .then((user) => res.send(user))
+    .then((user) => {
+      if (!user) {
+        res.status(NOT_FOUND_ERR.status).send({ message: NOT_FOUND_ERR.message });
+      } else {
+        res.send(user);
+      }
+    })
     .catch((err) => {
       if (err.name === 'CastError') {
-        res.status(CAST_ERR.status).send({ message: CAST_ERR.message });
+        res.status(VALIDATION_ERR.status).send({ message: VALIDATION_ERR.message });
         return;
       }
       res.status(DEFAULT_ERR.status).send({ message: DEFAULT_ERR.message });
@@ -45,7 +51,7 @@ module.exports.updateUserProfile = (req, res) => {
     .then((user) => res.send(user))
     .catch((err) => {
       if (err.name === 'CastError') {
-        res.status(CAST_ERR.status).send({ message: CAST_ERR.message });
+        res.status(NOT_FOUND_ERR.status).send({ message: NOT_FOUND_ERR.message });
         return;
       }
       if (err.name === 'ValidationError') {
@@ -69,7 +75,7 @@ module.exports.updateUserAvatar = (req, res) => {
     .then((user) => res.send(user))
     .catch((err) => {
       if (err.name === 'CastError') {
-        res.status(CAST_ERR.status).send({ message: CAST_ERR.message });
+        res.status(NOT_FOUND_ERR.status).send({ message: NOT_FOUND_ERR.message });
         return;
       }
       res.status(DEFAULT_ERR.status).send({ message: DEFAULT_ERR.message });
