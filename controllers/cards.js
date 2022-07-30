@@ -3,7 +3,7 @@ const { VALIDATION_ERR, NOT_FOUND_ERR, DEFAULT_ERR } = require('../error/errorCo
 
 module.exports.getCards = (req, res) => {
   Card.find({})
-    .then((cards) => res.send([cards]))
+    .then((cards) => res.send(cards))
     .catch(() => res.status(DEFAULT_ERR.status).send({ message: DEFAULT_ERR.message }));
 };
 
@@ -11,13 +11,11 @@ module.exports.createCard = (req, res) => {
   const { name, link } = req.body;
   const id = req.user._id;
 
-  if (!name || !link) {
-    res.status(VALIDATION_ERR.status).send({ message: VALIDATION_ERR.message });
-    return;
-  }
-
   Card.create({ name, link, owner: id })
-    .then((card) => res.send(card))
+    .then((card) => {
+      res.send(card);
+      res.status(201);
+    })
     .catch((err) => {
       if (err.name === 'ValidationError') {
         res.status(VALIDATION_ERR.status).send({ message: VALIDATION_ERR.message });
