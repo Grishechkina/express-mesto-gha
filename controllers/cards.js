@@ -13,8 +13,7 @@ module.exports.createCard = (req, res) => {
 
   Card.create({ name, link, owner: id })
     .then((card) => {
-      res.send(card);
-      res.status(201);
+      res.status(201).send(card);
     })
     .catch((err) => {
       if (err.name === 'ValidationError') {
