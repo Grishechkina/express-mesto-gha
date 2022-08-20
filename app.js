@@ -28,10 +28,10 @@ app.post(
   '/signup',
   celebrate({
     body: Joi.object().keys({
-      name: Joi.string().required().min(2).max(30),
-      about: Joi.string().required().min(2).max(30),
+      name: Joi.string().min(2).max(30),
+      about: Joi.string().min(2).max(30),
       email: Joi.string().required().email(),
-      avatar: Joi.string().required().custom((href, helpers) => {
+      avatar: Joi.string().custom((href, helpers) => {
         if (hrefRegex.test(href)) {
           return href;
         }
