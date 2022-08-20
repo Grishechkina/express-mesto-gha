@@ -51,7 +51,7 @@ module.exports.deleteCard = (req, res, next) => {
         next(new BadRequestError('Невалидные данные'));
         return;
       }
-      next();
+      next(err);
     });
 };
 
