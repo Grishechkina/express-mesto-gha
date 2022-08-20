@@ -37,6 +37,8 @@ module.exports.createUser = (req, res, next) => {
     bcrypt.hash(password, 10)
       .then((hash) => User.create({ name, about, avatar, email, password: hash }))
       .then((user) => {
+        // eslint-disable-next-line no-param-reassign
+        delete user.password;
         res.status(201).send(user);
       })
       .catch((err) => {
