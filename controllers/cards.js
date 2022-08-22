@@ -22,7 +22,7 @@ module.exports.createCard = (req, res, next) => {
         next(new BadRequestError('Невалидные данные'));
         return;
       }
-      next();
+      next(err);
     });
 };
 
@@ -74,7 +74,7 @@ module.exports.likeCard = (req, res, next) => {
         next(new BadRequestError('Невалидные данные'));
         return;
       }
-      next();
+      next(err);
     });
 };
 
@@ -97,6 +97,6 @@ module.exports.deleteCardLike = (req, res, next) => {
         next(new BadRequestError('Невалидные данные'));
         return;
       }
-      next();
+      next(err);
     });
 };

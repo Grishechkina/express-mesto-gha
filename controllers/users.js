@@ -1,4 +1,3 @@
-const validator = require('validator');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const User = require('../models/user');
@@ -33,29 +32,25 @@ module.exports.getUserById = (req, res, next) => {
 
 module.exports.createUser = (req, res, next) => {
   const { name, about, avatar, email, password } = req.body;
-  if (validator.isEmail(email)) {
-    bcrypt.hash(password, 10)
-      .then((hash) => User.create({ name, about, avatar, email, password: hash }))
-      .then((user) => {
-        res.status(201).send({
-          name: user.name, about: user.about, avatar: user.avatar, _id: user._id, email: user.email,
-        });
-      })
-      .catch((err) => {
-        if (err.name === 'ValidationError') {
-          next(new BadRequestError('Невалидные данные'));
-          return;
-        }
-        if (err.code === 11000) {
-          // Обработка ошибки
-          next(new ConflictError('Такой email уже существует'));
-          return;
-        }
-        next();
+  bcrypt.hash(password, 10)
+    .then((hash) => User.create({ name, about, avatar, email, password: hash }))
+    .then((user) => {
+      res.status(201).send({
+        name: user.name, about: user.about, avatar: user.avatar, _id: user._id, email: user.email,
       });
-  } else {
-    next(new BadRequestError('Невалидный email'));
-  }
+    })
+    .catch((err) => {
+      if (err.name === 'ValidationError') {
+        next(new BadRequestError('Невалидные данные'));
+        return;
+      }
+      if (err.code === 11000) {
+        // Обработка ошибки
+        next(new ConflictError('Такой email уже существует'));
+        return;
+      }
+      next(err);
+    });
 };
 
 module.exports.updateUserProfile = (req, res, next) => {
@@ -74,7 +69,7 @@ module.exports.updateUserProfile = (req, res, next) => {
         next(new BadRequestError('Невалидные данные'));
         return;
       }
-      next();
+      next(err);
     });
 };
 
@@ -94,7 +89,7 @@ module.exports.updateUserAvatar = (req, res, next) => {
         next(new BadRequestError('Невалидные данные'));
         return;
       }
-      next();
+      next(err);
     });
 };
 module.exports.login = (req, res, next) => {
@@ -108,7 +103,7 @@ module.exports.login = (req, res, next) => {
       return bcrypt.compare(password, user.password)
         .then((matched) => {
           if (!matched) {
-            throw new BadRequestError('Неправильные почта или пароль');
+            throw new BadAuthError('Неправильные почта или пароль');
           }
           return user;
         });
