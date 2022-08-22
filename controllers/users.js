@@ -26,7 +26,7 @@ module.exports.getUserById = (req, res, next) => {
         next(new BadRequestError('Несуществующий id'));
         return;
       }
-      next();
+      next(err);
     });
 };
 
